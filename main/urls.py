@@ -7,4 +7,5 @@ urlpatterns = [
     path('addProduct/', views.addProduct, name='addProduct'),
     path('viewInventory/', views.viewInventory, name='viewInventory'),
     path('transactions/', views.processTransactions, name='transactions'),
+    path('recentTransactions/', views.transHistory, name='recentTransactions'),
 ]

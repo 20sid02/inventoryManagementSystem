@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class products(models.Model):
     product_id = models.AutoField(primary_key=True)
@@ -28,7 +29,7 @@ class inventory_transactions(models.Model):
     change_type = models.CharField(max_length=10, choices=[('IN', 'In'), ('OUT', 'Out')])
     quantity = models.PositiveIntegerField(default=0, null=False, blank=False)
     timestamp = models.DateField(auto_now_add=True)
-
+"""
     def save(self, *args, **kwargs):
         creating = self._state.adding
         super().save(*args, **kwargs)
@@ -43,12 +44,12 @@ class inventory_transactions(models.Model):
             
             else:
                 if inv.quantity - self.quantity < 0:
-                    raise ValueError('Not Enough Stock')
+                    raise ValidationError('Not Enough Stock available')
                 inventory.objects.filter(product=self.product).update(
                 quantity=models.F("quantity") - self.quantity
             )
 
             inv.refresh_from_db()
 
-
+"""
 

@@ -6,7 +6,7 @@ from .models import products, inventory, inventory_transactions
 def index(request):
     products_rec = products.objects.all()
     inventory_transactions_rec = inventory_transactions.objects.all() 
-    return render(request, 'index.html', {'products_rec' : products_rec, 'inventory_transactions_rec' : inventory_transactions_rec})
+    return render(request, 'index.html', {'products_rec' : products_rec})
 
 def addProduct(request):
     form = createProductForm(request.POST or None)
@@ -33,8 +33,24 @@ def processTransactions(request):
     form = transactionsForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            trans = form.save()
-            messages.success(request, 'Transaction added successfully')
+            transaction = form.save()
+
+            inv = inventory.objects.get(product=transaction.product)
+            if transaction.change_type == 'OUT' and inv.quantity < transaction.quantity:
+                messages.error(request, 'Not enough stock available')
+                return redirect(request.META.get('HTTP_REFERER', 'index'))
+            
+            if transaction.change_type == 'OUT':
+                inv.quantity -= transaction.quantity
+            else:
+                inv.quantity += transaction.quantity
+            inv.save()
+            transaction.save()
+            messages.success(request, 'Transaction added Successfully!')
             return redirect('index')
     else:
         return render(request, 'transactions.html', {'form' : form})
+    
+def transHistory(request):
+    recentTrans = inventory_transactions.objects.select_related('product').all()
+    return render(request, 'recentTransactions.html', {'recentTrans' : recentTrans})

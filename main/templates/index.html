@@ -32,32 +32,4 @@
 </table>
 </div>
 
-<br>
-<h1 class = 'display-4'>Recent Transactions</h1>
-<br>
-<div class = "table-responsive">
-<table class="table table-light table-striped table-hover table-bordered table-sm">
-  <thead class = 'thead-dark'>
-    <tr>
-      <th scope="col">Product Id</th>
-      <th scope="col">Change Type</th>
-      <th scope="col">Quantity</th>
-      <th scope="col">TimeStamp</th>
-    </tr>
-</thead>
-<tbody>
-    {% if inventory_transactions_rec %}
-    {% for items in inventory_transactions_rec %}
-    <tr>
-      <td>{{items.product_id}}</td>
-      <td>{{items.change_type}}</td>
-      <td>{{items.quantity}}</td>
-      <td>{{items.timestamp}}</td>
-    </tr>
-</tbody>
-{% endfor %}
-{% endif %}
-</table>
-</div>
-
 {% endblock %}
