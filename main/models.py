@@ -8,6 +8,7 @@ class products(models.Model):
     cost_price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
     selling_price = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
     reorder_level = models.IntegerField(default=10)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -28,6 +29,7 @@ class inventory_transactions(models.Model):
     product = models.ForeignKey(products, on_delete=models.CASCADE, null=False, blank=False)
     change_type = models.CharField(max_length=10, choices=[('IN', 'In'), ('OUT', 'Out')])
     quantity = models.PositiveIntegerField(default=0, null=False, blank=False)
+    passed = models.BooleanField(default=True)
     timestamp = models.DateField(auto_now_add=True)
 """
     def save(self, *args, **kwargs):

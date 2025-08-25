@@ -4,8 +4,7 @@ from .forms import createProductForm, transactionsForm
 from .models import products, inventory, inventory_transactions
 
 def index(request):
-    products_rec = products.objects.all()
-    inventory_transactions_rec = inventory_transactions.objects.all() 
+    products_rec = products.objects.filter(is_active=True, inventory__quantity__gt=0)
     return render(request, 'index.html', {'products_rec' : products_rec})
 
 def addProduct(request):
@@ -25,7 +24,7 @@ def addProduct(request):
 
 
 def viewInventory(request):
-    items = inventory.objects.select_related('product').all()
+    items = inventory.objects.select_related('product').filter(product__is_active=True, quantity__gt=0)
     return render(request, 'viewInventory.html', {'items' : items})
 
 
@@ -34,7 +33,6 @@ def processTransactions(request):
     if request.method == 'POST':
         if form.is_valid():
             transaction = form.save()
-
             inv = inventory.objects.get(product=transaction.product)
             if transaction.change_type == 'OUT' and inv.quantity < transaction.quantity:
                 messages.error(request, 'Not enough stock available')
@@ -42,8 +40,13 @@ def processTransactions(request):
             
             if transaction.change_type == 'OUT':
                 inv.quantity -= transaction.quantity
+                if inv.quantity <= 0:
+                    inv.quantity = 0
+                    inv.product.is_active = False
+                    transaction.passed = False
             else:
                 inv.quantity += transaction.quantity
+                inv.product.is_active =True
             inv.save()
             transaction.save()
             messages.success(request, 'Transaction added Successfully!')
@@ -52,5 +55,5 @@ def processTransactions(request):
         return render(request, 'transactions.html', {'form' : form})
     
 def transHistory(request):
-    recentTrans = inventory_transactions.objects.select_related('product').all()
+    recentTrans = inventory_transactions.objects.select_related('product').filter(passed=True)
     return render(request, 'recentTransactions.html', {'recentTrans' : recentTrans})
