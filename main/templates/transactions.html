@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="display-4">Transactions</h1>
+
+<form method="POST" action="{% url 'transactions' %}">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-secondary">Process Transaction</button>
+</form>
+
+{% endblock %}

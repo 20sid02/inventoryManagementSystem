@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class = "table-responsive">
+    <h1>Inventory</h1>
+    <br>
+<table class="table table-light table-striped table-hover table-bordered table-md">
+  <thead class = 'thead-dark'>
+    <tr>
+      <th scope="col">Product Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Last Updated</th>
+    </tr>
+</thead>
+<tbody>
+    {% if items %}
+    {% for item in items %}
+    <tr>
+      <td>{{item.product_id}}</td>
+      <td>{{item.product.name}}</td>
+      <td>{{item.quantity}}</td>
+      <td>{{item.last_updated}}</td>
+    </tr>
+</tbody>
+{% endfor %}
+{% endif %}
+</table>
+</div>
+
+{% endblock %}
